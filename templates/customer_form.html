@@ -1,0 +1,99 @@
+{{define "content"}}
+
+
+<header class="py-3 mb-4 border-bottom">
+    <div class="container d-flex flex-wrap justify-content-center">
+        <div class="d-flex align-items-center mb-3 mb-lg-0 me-lg-auto text-dark text-decoration-none">
+            <i class="bi bi-person-plus display-6 me-3"></i>
+            <span class="fs-4">{{.Title}}</span>
+        </div>
+        <div class="col-12 col-lg-auto mb-3 mb-lg-0" >
+            <button type="button" id="submit" class="btn btn-primary btn-sm">
+                <i class="bi bi-save"></i>
+                <span>Save</span>
+            </button>
+            {{ if ne .DeleteAction ""}}
+            <button id="deleteButton" type="button" class="btn btn-sm btn-outline-danger" onclick="">Delete</button>
+            <form id="deleteCustomerForm" method="post" action="{{.DeleteAction}}">
+                <input type="hidden" name="hash" value="{{.Customer.Hash}}">
+
+            </form>
+            {{ end }}
+        </div>
+    </div>
+</header>
+<form id="customerForm" method="post" action="{{.SubmitAction}}">
+<div class="container">
+    <div class="row mb-2">
+        <div class="col-12">
+            {{if .Errors}}
+            {{ $type := (printf "%T" .Errors) }}
+            <div class="alert alert-danger alert-dismissible" role="alert">
+                {{ if eq $type "validation.Errors" }}
+                <ul>
+                    {{- range $key, $value := .Errors}}
+                    <li>{{$key}} {{$value}}</li>
+                    {{- end}}
+                </ul>
+                {{end}}
+                {{if eq $type "*errors.errorString"}}
+                <span>{{.Errors}}</span>
+                {{end}}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            {{end}}
+        </div>
+
+    </div>
+    <input type="hidden" name="hash" value="{{.Customer.Hash}}">
+    <div class="row">
+        <div class="col-6">
+            <label for="" class="form-label">Firstname</label>
+            <input type="text" name="firstname" class="form-control" value="{{.Customer.Firstname}}">
+        </div>
+        <div class="col-6">
+            <label for="" class="form-label">Lastname</label>
+            <input type="text" name="lastname" class="form-control" value="{{.Customer.Lastname}}">
+        </div>
+        <div class="col-6">
+            <label for="" class="form-label">Email</label>
+            <input type="text" name="email" class="form-control" value="{{.Customer.Email}}">
+        </div>
+        <div class="col-6">
+            <label for="" class="form-label">Address</label>
+            <input type="text" name="address" class="form-control" value="{{.Customer.Address}}">
+        </div>
+        <div class="col-6">
+            <label for="" class="form-label">Birthday</label>
+            <input type="date" name="birthday"  class="form-control" {{ if not .Customer.Birthdate.IsZero }} value='{{.Customer.Birthdate.Format "2006-01-02"}}' {{end}}>
+        </div>
+        <div class="col-6">
+            <label for="" class="form-label">Gender</label>
+            {{$gender := .Customer.Gender}}
+            <select class="form-select" name="gender">
+                {{ range $key, $value := .Genders}}
+                <option value="{{$key}}" {{if eq $key $gender }} selected="selected" {{end}}>{{$value}}</option>
+                {{end}}
+
+            </select>
+        </div>
+    </div>
+</div>
+
+
+</form>
+<script>
+    $(document).ready(function() {
+        $("#submit").click(function() {
+            $("#customerForm").submit();
+        })
+
+        $("#deleteButton").click(function (){
+            if (confirm("Are you sure you want to delete this customer?")) {
+                $("#deleteCustomerForm").submit()
+            }
+        })
+    })
+
+</script>
+{{end}}

@@ -1,0 +1,70 @@
+{{define "content"}}
+
+<header class="py-3 mb-4 border-bottom">
+    <div class="container d-flex flex-wrap justify-content-center">
+        <div class="d-flex align-items-center mb-3 mb-lg-0 me-lg-auto text-dark text-decoration-none">
+            <i class="bi bi-people display-6 me-3"></i>
+            <span class="fs-4">{{.Title}}</span>
+            <a href="/create" class="btn btn-primary btn-sm ms-4 ">
+                <i class="bi bi-person-plus me-1"></i>
+                Add new
+            </a>
+        </div>
+    </div>
+</header>
+
+<div class="container">
+    {{ if ne .Error "" }}
+    <div class="alert alert-danger alert-dismissible" role="alert">
+        <div>{{.Error}}</div>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {{end}}
+
+    {{ if ne .Message "" }}
+    <div class="alert alert-success alert-dismissible" role="alert">
+        <div>{{.Message}}</div>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {{end}}
+
+
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">Lastname</th>
+            <th scope="col">Firstname</th>
+            <th scope="col">Gender</th>
+            <th scope="col">Email</th>
+        </tr>
+        </thead>
+        <tbody>
+        </tbody>
+
+    </table>
+</div>
+<script>
+    $(document).ready( function () {
+        const table = $('.table').DataTable({
+            serverSide: true,
+            ajax: '/search',
+            columns: [
+                { data: 'Lastname' },
+                { data: 'Firstname' },
+                { data: 'Gender'},
+                { data: 'Email' },
+            ]
+        });
+        $('.table tbody').on('click', 'tr', function () {
+            var data = table.row(this).data();
+            window.location.href = window.location.origin + '/edit/' + data.Id
+        });
+
+    } );
+</script>
+<style>
+    tbody tr {
+        cursor: pointer;
+    }
+</style>
+{{end}}
