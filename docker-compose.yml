@@ -5,22 +5,18 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-      target: dev
     env_file:
-      - .env.example
+      - .env
     ports:
       - "8085:8080"
-    restart: 'unless-stopped'
-    volumes:
-      - .:/app
     depends_on:
       - database
     environment:
-      DB_HOST: DB_HOST
-      DB_USER: DB_USER
-      DB_NAME: DB_NAME
-      DB_PASSWORD: DB_PASSWORD
-      DB_PORT: DB_PORT
+      DB_HOST: ${DB_HOST}
+      DB_USER: ${DB_USER}
+      DB_NAME: ${DB_NAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_PORT: ${DB_PORT}
     networks:
       - wallester
 
@@ -28,11 +24,11 @@ services:
     image: 'postgres'
     restart: 'always'
     env_file:
-      - .env.example
+      - .env
     environment:
-      POSTGRES_DB: 'dev'
-      POSTGRES_USER: 'user'
-      POSTGRES_PASSWORD: 'password'
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_HOST_AUTH_METHOD: 'trust'
     ports:
       - "5342:5342"
